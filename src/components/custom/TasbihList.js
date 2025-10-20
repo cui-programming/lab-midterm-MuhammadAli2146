@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
-import { Text, Button } from '../ui';  // UI layer se import
+import { View, TouchableOpacity } from 'react-native';
+import { Text } from '../ui';
 import { styles } from '../../styles/styles';
 import { initialAzkaar } from '../../data/azkaar';
 
@@ -27,15 +27,32 @@ export default function TasbihList() {
     );
   };
 
-  // Render each row
+  // Render each row with aesthetic buttons
   const renderItem = ({ item }) => (
-    <View style={styles.itemRow}>
+    <View style={styles.itemRow} key={item.id}>
       <Text style={styles.itemName}>{item.phrase}</Text>
 
       <View style={styles.counterRow}>
-        <Button onPress={() => increment(item.id)}>+</Button>
+        {/* Increment Button - Green */}
+        <TouchableOpacity 
+          style={[styles.button, styles.incrementButton]}
+          onPress={() => increment(item.id)}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.buttonText}>+</Text>
+        </TouchableOpacity>
+
+        {/* Counter Display */}
         <Text style={styles.counter}>{item.count}</Text>
-        <Button onPress={() => decrement(item.id)}>-</Button>
+
+        {/* Decrement Button - Red */}
+        <TouchableOpacity 
+          style={[styles.button, styles.decrementButton]}
+          onPress={() => decrement(item.id)}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.buttonText}>-</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

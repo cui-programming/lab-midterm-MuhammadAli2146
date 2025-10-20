@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, FlatList } from 'react-native';
+import { View, TouchableOpacity, FlatList } from 'react-native';
+import { Text, TextInput } from '../ui';
 import { styles } from '../../styles/styles';
 import { initialAzkaar } from '../../data/azkaar';
 
@@ -7,6 +8,8 @@ export default function SearchAndAdd() {
   const [items, setItems] = useState(initialAzkaar);
   const [search, setSearch] = useState('');
   const [newPhrase, setNewPhrase] = useState('');
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [addFocused, setAddFocused] = useState(false);
 
   // Filtered list
   const filteredItems = items.filter(item =>
@@ -29,38 +32,58 @@ export default function SearchAndAdd() {
   };
 
   return (
-    <View style={{ padding: 10 }}>
-      <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Search & Add Azkaar</Text>
+    <View style={styles.searchSection}>
+      <Text style={styles.sectionTitle}>Search & Add Azkaar</Text>
 
       {/* Search Box */}
       <TextInput
         placeholder="Search..."
         value={search}
         onChangeText={setSearch}
-        style={{ borderWidth: 1, padding: 5, marginVertical: 5 }}
+        style={[styles.input, searchFocused && styles.inputFocused]}
+        onFocus={() => setSearchFocused(true)}
+        onBlur={() => setSearchFocused(false)}
+        placeholderTextColor="#94a3b8"
       />
 
       {/* Add Box */}
-      <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+      <View style={styles.row}>
         <TextInput
           placeholder="Add new phrase..."
           value={newPhrase}
           onChangeText={setNewPhrase}
-          style={{ borderWidth: 1, padding: 5, flex: 1 }}
+          style={[styles.input, addFocused && styles.inputFocused, { flex: 1, marginBottom: 0 }]}
+          onFocus={() => setAddFocused(true)}
+          onBlur={() => setAddFocused(false)}
+          placeholderTextColor="#94a3b8"
         />
-        <Button title="Add" onPress={addPhrase} />
+        <TouchableOpacity 
+          style={styles.addButton}
+          onPress={addPhrase}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.addButtonText}>ADD</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* List */}
-      <FlatList
-        data={filteredItems}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <Text style={{ fontSize: 16, paddingVertical: 2 }}>
-            {item.phrase} ({item.count})
-          </Text>
-        )}
-      />
+      {/* List of Azkaar */}
+      {filteredItems.length > 0 ? (
+        <FlatList
+          data={filteredItems}
+          keyExtractor={item => item.id}
+          style={styles.azkaarList}
+          renderItem={({ item }) => (
+            <View style={styles.azkaarItem}>
+              <Text style={styles.azkaarText}>{item.phrase}</Text>
+              <Text style={styles.azkaarCount}>Count: {item.count}</Text>
+            </View>
+          )}
+        />
+      ) : (
+        <Text style={styles.emptyState}>
+          {search ? 'No matching azkaar found' : 'Start adding your azkaar'}
+        </Text>
+      )}
     </View>
   );
 }
